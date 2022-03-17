@@ -6,7 +6,7 @@ public class Deque<Item> implements Iterable<Item> {
     private Node head;
     private Node tail;
 
-    private class Node<Item> {
+    private class Node {
         Item item;
         Node next;
         Node prev;
@@ -72,7 +72,7 @@ public class Deque<Item> implements Iterable<Item> {
         if (isEmpty()) {
             throw new NoSuchElementException();
         }
-        Item item = (Item) head.item;
+        Item item = head.item;
         if (size() == 1) {
             head = null;
             tail = null;
@@ -89,7 +89,7 @@ public class Deque<Item> implements Iterable<Item> {
         if (isEmpty()) {
             throw new NoSuchElementException();
         }
-        Item item = (Item) tail.item;
+        Item item = tail.item;
         if (size() == 1) {
             head = null;
             tail = null;
@@ -108,12 +108,13 @@ public class Deque<Item> implements Iterable<Item> {
 
     private class ListIterator implements Iterator<Item> {
         Node cursor = head;
+
         @Override
         public Item next() {
-            if (cursor.next == null) {
+            if (!hasNext()) {
                 throw new NoSuchElementException();
             }
-            Item item = (Item) cursor.item;
+            Item item = cursor.item;
             cursor = cursor.next;
             return item;
         }
@@ -125,19 +126,18 @@ public class Deque<Item> implements Iterable<Item> {
 
         @Override
         public boolean hasNext() {
-            return (cursor.next != null);
+            return (cursor != null);
         }
     }
 
     // unit testing (required)
     public static void main(String[] args) {
-        new Deque().run();
+        new Deque<>().run();
     }
 
     private void run() {
-        String[] testInputStrings =
-                new String[]{ "elden", "ring", "is", "a", "great", "game,", "albeit", "quite", "overrated" };
-        Deque test1 = new Deque();
+        String[] testInputStrings = { "elden", "ring", "is", "a", "great", "game,", "albeit", "quite", "overrated" };
+        Deque<String> test1 = new Deque<>();
 
         for (String s : testInputStrings) {
             test1.addFirst(s);
@@ -150,14 +150,15 @@ public class Deque<Item> implements Iterable<Item> {
         String[] testRemoveFirstAndLast = new String[testInputStrings.length - 2];
 
         for (int i = 0; i < testRemoveFirstAndLast.length; i++) {
-            testRemoveFirstAndLast[i] = (String) test1.head.item;
+            testRemoveFirstAndLast[i] = test1.head.item;
             test1.removeFirst();
         }
 
         boolean testResult = false;
         for (int i = 0; i < testRemoveFirstAndLast.length; i++) {
-            if (testRemoveFirstAndLast[i] != testInputStrings[testRemoveFirstAndLast.length - i]) {
+            if (testRemoveFirstAndLast[i].equals(testInputStrings[testRemoveFirstAndLast.length - i - 1])) {
                 testResult = true;
+                break;
             }
         }
 
@@ -173,17 +174,17 @@ public class Deque<Item> implements Iterable<Item> {
 
         String[] thirdTest = new String[2];
 
-        StringBuffer sb = new StringBuffer();
+        StringBuilder sb = new StringBuilder();
         for (String s : testInputStrings) {
             sb.append(s).append(" ");
         }
         thirdTest[0] = sb.toString();
-        sb = new StringBuffer();
+        sb = new StringBuilder();
 
-        Node cursor = test1.tail;
+        Deque<String>.Node cursor = test1.tail;
         sb.append(cursor.item).append(" ");
         while (cursor.prev != null) {
-            sb.append((String) cursor.prev.item).append(" ");
+            sb.append(cursor.prev.item).append(" ");
             cursor = cursor.prev;
         }
         thirdTest[1] = sb.toString();
